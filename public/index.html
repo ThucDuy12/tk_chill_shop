@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tk.chill shop</title>
+    <link rel="icon" type="image/x-icon" href="/images/icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1a2a6c, #2b5876);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            position: relative;
+        }
+        
+        nav ul li {
+            margin-left: 20px;
+            position: relative;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        nav ul li a:hover {
+            color: #ffcc00;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .user-actions button {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .user-actions button:hover {
+            background: white;
+            color: #1a2a6c;
+        }
+        
+        /* Dropdown menu */
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            top: 100%;
+            left: 0;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+            color: #1a2a6c;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .cart-count {
+            background-color: #ffcc00;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        
+        .hero {
+            background: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1474&q=80') no-repeat center center/cover;
+            height: 450px;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+        }
+        
+        .hero-content {
+            position: relative;
+            width: 100%;
+            padding: 0 20px;
+        }
+        
+        .hero h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #ffcc00;
+            color: #333;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #ffd633;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .view-all-btn {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .products {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2b5876;
+            font-size: 32px;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #ffcc00;
+            margin: 10px auto;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: white;
+            border: 2px solid #2b5876;
+            color: #2b5876;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .filter-btn.active, .filter-btn:hover {
+            background: #2b5876;
+            color: white;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .product-img {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .product-card:hover .product-img img {
+            transform: scale(1.1);
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-info h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #2b5876;
+        }
+        
+        .product-info p {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .product-price {
+            font-size: 22px;
+            color: #1a2a6c;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .product-sim {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(26, 42, 108, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .add-to-cart {
+            background: #2b5876;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+        
+        .add-to-cart:hover {
+            background: #1a2a6c;
+        }
+        
+        .view-details {
+            background: #ffcc00;
+            color: #333;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+        
+        .view-details:hover {
+            background: #ffd633;
+        }
+        
+        footer {
+            background: #1a2a6c;
+            color: white;
+            padding: 40px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: #ffcc00;
+        }
+        
+        .footer-section p {
+            margin-bottom: 10px;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-section ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section ul li a:hover {
+            color: #ffcc00;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            margin-right: 15px;
+            color: white;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        
+        .social-icons a:hover {
+            color: #ffcc00;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #2b5876;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            nav ul li {
+                margin: 10px;
+            }
+            
+            .dropdown-content {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .hero h2 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .user-actions {
+                margin-top: 15px;
+            }
+        }
+        
+        .cart-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        
+        .modal-img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+        
+        /* Auth Modal */
+        .auth-modal {
+            display: none;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background: #f1f1f1;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .auth-tab.active {
+            background: white;
+            border-bottom: 2px solid #2b5876;
+            font-weight: bold;
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 35px;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .auth-submit {
+            background: #2b5876;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        
+        .auth-submit:hover {
+            background: #1a2a6c;
+        }
+        
+        .forgot-password {
+            text-align: right;
+            margin-top: 5px;
+        }
+        
+        .forgot-password a {
+            color: #2b5876;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        
+        .social-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .social-login p {
+            margin-bottom: 15px;
+            position: relative;
+            color: #777;
+        }
+        
+        .social-login p::before,
+        .social-login p::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background-color: #ddd;
+        }
+        
+        .social-login p::before {
+            left: 0;
+        }
+        
+        .social-login p::after {
+            right: 0;
+        }
+        
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .social-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .social-btn.google {
+            background: #DB4437;
+        }
+        
+        .social-btn.facebook {
+            background: #4267B2;
+        }
+        
+        .social-btn.apple {
+            background: #000;
+        }
+        
+        .social-btn.discord {
+            background: #7289DA;
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+        
+        .user-info span {
+            margin-right: 10px;
+        }
+        /* Thêm style mới cho giỏ hàng khi đăng nhập */
+        #userCartBtn {
+            color: white !important;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        #userCartBtn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #cartCountUser {
+            background-color: #ffcc00;
+            color: #1a2a6c;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-plane"></i>
+                    <h1>tk.chill shop</h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="nav-link" data-page="home">Trang Chủ</a></li>
+                        <li class="dropdown">
+                            <a href="#">Sản Phẩm <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i></a>
+                            <div class="dropdown-content">
+                                <a href="#" data-filter="all">Tất cả sản phẩm</a>
+                                <a href="#" data-filter="MSFS">Microsoft Flight Simulator 2020</a>
+                                <a href="#" data-filter="XPLANE">X-Plane 11-12</a>
+                                <a href="#" data-filter="P3D">Prepar3D</a>
+                            </div>
+                        </li>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#" class="nav-link" data-page="cart"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <div id="userInfo" class="user-info" style="display: none;">
+                        <span id="userName"></span>
+                        <button id="logoutBtn">Đăng xuất</button>
+                    </div>
+                    <div id="authButtons">
+                        <button id="loginBtn">Đăng nhập</button>
+                        <button id="registerBtn">Đăng ký</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Home Page -->
+        <div id="home-page">
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>Liveries</h2>
+                    <p>Nâng tầm chiếc máy bay của bạn với những thiết kế độc đáo và chuyên nghiệp.</p>
+                    <a href="#products" class="btn">Khám Phá Ngay</a>
+                </div>
+            </section>
+
+            <section class="products" id="products">
+                <div class="container">
+                    <h2 class="section-title">Livery Nổi Bật</h2>
+                    
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">Tất cả</button>
+                        <button class="filter-btn" data-filter="MSFS">MSFS</button>
+                        <button class="filter-btn" data-filter="XPLANE">X-Plane</button>
+                        <button class="filter-btn" data-filter="P3D">Prepar3D</button>
+                    </div>
+                    
+                    <div class="product-grid">
+                        <div class="product-card" data-sim="MSFS">
+                            <div class="product-img">
+                                <img src="https://media.discordapp.net/attachments/1368959938814279791/1393139793801515059/1250410_20250711145055_1.png?ex=68bbea0a&is=68ba988a&hm=98966ac42ddb991f5e8543dd575504f10babfdd210235a7fcde2db15f1ac5d77&=&format=webp&quality=lossless&width=1421&height=800" alt="Livery 1">
+                            </div>
+                            <span class="product-sim">MSFS</span>
+                            <div class="product-info">
+                                <h3>Aerosoft CRJ900 Air Mekong</h3>
+                                <p>Thiết kế chi tiết cho Aerosoft CRJ900 với phong cách Air Mekong cổ điển.</p>
+                                <div class="product-price">50.000 VNĐ</div>
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-id="1" data-name="Aerosoft CRJ900 Air Mekong" data-price="50000" data-image="https://media.discordapp.net/attachments/1368959938814279791/1393139793801515059/1250410_20250711145055_1.png?ex=68bbea0a&is=68ba988a&hm=98966ac42ddb991f5e8543dd575504f10babfdd210235a7fcde2db15f1ac5d77&=&format=webp&quality=lossless&width=1421&height=800">Thêm vào giỏ</button>
+                                    <button class="view-details" data-id="1">Xem chi tiết</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-sim="MSFS">
+                            <div class="product-img">
+                                <img src="https://media.discordapp.net/attachments/1368959938814279791/1393140165718966312/1250410_20250706153501_1.png?ex=68bbea62&is=68ba98e2&hm=fd1b74297be352d73a0b58117e4d5e356f0eb7f339c5215f89d4502732214206&=&format=webp&quality=lossless&width=1421&height=800" alt="Livery 2">
+                            </div>
+                            <span class="product-sim">MSFS</span>
+                            <div class="product-info">
+                                <h3>Headwind A330-900 (neo) VietjetAir Chinsu Livery</h3>
+                                <p>Livery đặc biệt cho Headwind A330neo với thiết kế Chinsu độc đáo của VietjetAir.</p>
+                                <div class="product-price">50.000 VNĐ</div>
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-id="2" data-name="Headwind A330-900 (neo) VietjetAir Chinsu Livery" data-price="50000" data-image="https://media.discordapp.net/attachments/1368959938814279791/1393140165718966312/1250410_20250706153501_1.png?ex=68bbea62&is=68ba98e2&hm=fd1b74297be352d73a0b58117e4d5e356f0eb7f339c5215f89d4502732214206&=&format=webp&quality=lossless&width=1421&height=800">Thêm vào giỏ</button>
+                                    <button class="view-details" data-id="2">Xem chi tiết</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-sim="MSFS">
+                            <div class="product-img">
+                                <img src="https://media.discordapp.net/attachments/1368959938814279791/1381923425030901810/1250410_20250609161816_1.png?ex=68bbfa7b&is=68baa8fb&hm=15dbde3e96f6a1d782f312a579a49e57dc351bdff6b1fb087179f63dd24a9650&=&format=webp&quality=lossless&width=1421&height=800" alt="Livery 3">
+                            </div>
+                            <span class="product-sim">MSFS</span>
+                            <div class="product-info">
+                                <h3>Airbus A350-900 VietjetAir Chinsu VN-A631</h3>
+                                <p>Livery Chinsu đặc biệt cho Airbus A350-900 của VietjetAir, số hiệu VN-A631.</p>
+                                <div class="product-price">50.000 VNĐ</div>
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-id="3" data-name="Airbus A350-900 VietjetAir Chinsu VN-A631" data-price="50000" data-image="https://media.discordapp.net/attachments/1368959938814279791/1381923425030901810/1250410_20250609161816_1.png?ex=68bbfa7b&is=68baa8fb&hm=15dbde3e96f6a1d782f312a579a49e57dc351bdff6b1fb087179f63dd24a9650&=&format=webp&quality=lossless&width=1421&height=800">Thêm vào giỏ</button>
+                                    <button class="view-details" data-id="3">Xem chi tiết</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-sim="XPLANE">
+                            <div class="product-img">
+                                <img src="https://media.discordapp.net/attachments/1368959938814279791/1377850445460148304/screenshot_1748575141.png?ex=68bba9b9&is=68ba5839&hm=de1a0d5b5ca2850eb2b22fe220b63d0d1eee9fda4161c741de3f1b781f4237da&=&format=webp&quality=lossless&width=1421&height=800" alt="Livery 4">
+                            </div>
+                            <span class="product-sim">X-Plane</span>
+                            <div class="product-info">
+                                <h3>AIRBUS A321-271NX VIETNAM AVIATION ACADEMY</h3>
+                                <p class="product-description">Livery đào tạo đặc biệt cho Airbus A321neo của Học viện Hàng không Việt Nam.</p>
+                                <div class="product-price">50.000 VNĐ</div>
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-id="4" data-name="AIRBUS A321-271NX VIETNAM AVIATION ACADEMY" data-price="50000" data-image="https://media.discordapp.net/attachments/1368959938814279791/1377850445460148304/screenshot_1748575141.png?ex=68bba9b9&is=68ba5839&hm=de1a0d5b5ca2850eb2b22fe220b63d0d1eee9fda4161c741de3f1b781f4237da&=&format=webp&quality=lossless&width=1421&height=800">Thêm vào giỏ</button>
+                                    <button class="view-details" data-id="4">Xem chi tiết</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="view-all-btn">
+                        <a href="#" class="btn">Xem Tất Cả Sản Phẩm</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal for product details -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal auth-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Đăng nhập</div>
+                <div class="auth-tab" data-tab="register">Đăng ký</div>
+            </div>
+            
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <input type="password" id="loginPassword" required>
+                    <i class="fas fa-eye password-toggle" id="loginPasswordToggle"></i>
+                </div>
+                <div class="forgot-password">
+                    <a href="#" id="forgotPasswordLink">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" class="auth-submit">Đăng nhập</button>
+                
+                <div class="social-login">
+                    <p>Hoặc đăng nhập với</p>
+                    <div class="social-buttons">
+                        <a class="social-btn google" href="/auth/google"><i class="fab fa-google"></i></a>
+                        <a class="social-btn discord" href="/auth/discord"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+            </form>
+            
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName">Họ tên</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mật khẩu</label>
+                    <input type="password" id="registerPassword" required>
+                    <i class="fas fa-eye password-toggle" id="registerPasswordToggle"></i>
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Xác nhận mật khẩu</label>
+                    <input type="password" id="registerConfirmPassword" required>
+                    <i class="fas fa-eye password-toggle" id="registerConfirmPasswordToggle"></i>
+                </div>
+                <button type="submit" class="auth-submit">Đăng ký</button>
+                
+                <div class="social-login">
+                    <p>Hoặc đăng ký với</p>
+                    <div class="social-buttons">
+                        <a class="social-btn google" href="/auth/google"><i class="fab fa-google"></i></a>
+                        <a class="social-btn discord" href="/auth/discord"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal auth-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Quên mật khẩu</h2>
+            <p>Nhập email của bạn để nhận liên kết đặt lại mật khẩu</p>
+            
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="forgotPasswordEmail">Email</label>
+                    <input type="email" id="forgotPasswordEmail" required>
+                </div>
+                <button type="submit" class="auth-submit">Gửi yêu cầu</button>
+            </form>
+            
+            <div class="forgot-password">
+                <a href="#" id="backToLoginLink">Quay lại đăng nhập</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="cart-notification" id="cartNotification">
+        Đã thêm vào giỏ hàng!
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Về tk.chill</h3>
+                    <p>Chúng tôi chuyên thiết kế và cung cấp các livery máy bay chất lượng cao, độc đáo và chuyên nghiệp cho các hãng hàng không và cá nhân.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Liên Kết Nhanh</h3>
+                    <ul>
+                        <li><a href="#" class="nav-link" data-page="home">Trang Chủ</a></li>
+                        <li><a href="#">Sản Phẩm</a></li>
+                        <li><a href="#">Dịch Vụ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Liên Hệ</h3>
+                    <p><i class="fa-brands fa-discord"></i>>Discord</p>
+                    <p><i class="fas fa-envelope"></i>nguyentrantuankiet8@gmail.com</p>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/tuankiet.nguyentran.1510?locale=vi_VN"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.tiktok.com/@tk.chill"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="https://discord.gg/CD6D46zM9R"><i class="fa-brands fa-discord"></i></a>
+                        <a href="https://www.youtube.com/@NguyenTranTuanKiet"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  // DOM elements (existing)
+  const navCartLink = document.querySelector('.nav-link[data-page="cart"]');
+  const addToCartButtons = document.querySelectorAll('.add-to-cart');
+  const viewDetailsButtons = document.querySelectorAll('.view-details');
+  const cartNotification = document.getElementById('cartNotification');
+  const cartCountSpan = document.getElementById('cartCount');
+  const modal = document.getElementById('productModal');
+  const modalContent = document.getElementById('modalContent');
+  const closeModal = document.querySelectorAll('.close');
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const productCards = document.querySelectorAll('.product-card');
+  const authModal = document.getElementById('authModal');
+  const loginBtn = document.getElementById('loginBtn');
+  const registerBtn = document.getElementById('registerBtn');
+  const authTabs = document.querySelectorAll('.auth-tab');
+  const authForms = document.querySelectorAll('.auth-form');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const userInfo = document.getElementById('userInfo');
+  const authButtons = document.getElementById('authButtons');
+  const userNameEl = document.getElementById('userName');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+  const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+  const backToLoginLink = document.getElementById('backToLoginLink');
+  const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+
+  // cart button that will be injected next to logout when logged in
+  let userCartBtn = null;
+
+  let cartCount = 0
+
+  let currentUser = null;
+
+  // Helper to update cart count in header (reads server cart)
+  async function refreshCartCount() {
+                if (!currentUser) { 
+                    cartCountSpan.textContent = '0'; 
+                    return 0;
+                }
+                try {
+                    const r = await fetch('/api/cart');
+                    const data = await r.json();
+                    if (data.ok) {
+                        const total = data.cart.reduce((s, it) => s + Number(it.quantity || 1), 0);
+                        cartCountSpan.textContent = total;
+                        // Cập nhật cả user cart count nếu có
+                        const userCartCount = document.getElementById('cartCountUser');
+                        if (userCartCount) {
+                            userCartCount.textContent = total;
+                        }
+                        return total;
+                    } else {
+                        cartCountSpan.textContent = '0';
+                        return 0;
+                    }
+                } catch (e) {
+                    console.error(e);
+                    cartCountSpan.textContent = '0';
+                    return 0;
+                }
+            }
+
+            // Sửa lỗi: Xóa dòng cartCount++ và thay bằng refreshCartCount
+            addToCartButtons.forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    if (!currentUser) { showAuthModal('login'); return; }
+                    const id = this.dataset.id;
+                    const name = this.dataset.name;
+                    const price = Number(this.dataset.price || 0);
+                    const image = this.dataset.image;
+                    try {
+                        // get current cart
+                        const cr = await fetch('/api/cart'); 
+                        const data = await cr.json();
+                        let cart = (data.ok && Array.isArray(data.cart)) ? data.cart : [];
+                        const found = cart.find(i => i.id === id);
+                        if (found) found.quantity = Number(found.quantity || 1) + 1;
+                        else cart.push({ id, name, price, image, quantity: 1 });
+                        // save back
+                        await fetch('/api/cart', { 
+                            method: 'POST', 
+                            headers: {'Content-Type':'application/json'}, 
+                            body: JSON.stringify({ cart }) 
+                        });
+                        cartNotification.textContent = `Đã thêm "${name}" vào giỏ hàng!`; 
+                        cartNotification.style.display = 'block';
+                        
+                        // Sửa lỗi: Thay vì tăng biến cục bộ, gọi refreshCartCount
+                        await refreshCartCount();
+                        
+                        setTimeout(()=> cartNotification.style.display = 'none', 2500);
+                    } catch (e) {
+                        console.error(e);
+                        alert('Lỗi khi thêm giỏ hàng');
+                    }
+                });
+            });
+
+  // On load, check session user from server
+  fetch('/api/me').then(r => r.json()).then(data => {
+    if (data.loggedIn && data.user) currentUser = data.user;
+    else currentUser = null;
+    updateLoginStatus();
+    refreshCartCount();
+  }).catch(err => { console.error('Error /api/me', err); updateLoginStatus(); });
+
+  // Behavior: nav cart click
+  navCartLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!currentUser) {
+      // not logged in -> show login modal
+      showAuthModal('login');
+      return;
+    }
+    openCartModal();
+  });
+
+
+  // --- other UI handlers unchanged (view details / modal close / filters / auth forms)
+  viewDetailsButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const productId = this.getAttribute('data-id');
+      showProductDetails(productId);
+    });
+  });
+
+  closeModal.forEach(close => close.addEventListener('click', () => { modal.style.display = 'none'; authModal.style.display = 'none'; forgotPasswordModal.style.display = 'none'; }));
+  window.addEventListener('click', function(e) { if (e.target == modal) modal.style.display = 'none'; if (e.target == authModal) authModal.style.display = 'none'; if (e.target == forgotPasswordModal) forgotPasswordModal.style.display = 'none'; });
+
+  filterButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      filterButtons.forEach(b=>b.classList.remove('active')); this.classList.add('active');
+      const filter = this.dataset.filter;
+      productCards.forEach(card => card.style.display = (filter === 'all' || card.dataset.sim === filter) ? 'block' : 'none');
+    });
+  });
+
+  loginBtn.addEventListener('click', () => showAuthModal('login'));
+  registerBtn.addEventListener('click', () => showAuthModal('register'));
+  authTabs.forEach(tab => tab.addEventListener('click', function(){ authTabs.forEach(t=>t.classList.remove('active')); this.classList.add('active'); authForms.forEach(f=>f.classList.remove('active')); document.getElementById(`${this.dataset.tab}Form`).classList.add('active'); }));
+
+  forgotPasswordLink.addEventListener('click', e => { e.preventDefault(); authModal.style.display='none'; forgotPasswordModal.style.display='block'; });
+  backToLoginLink.addEventListener('click', e => { e.preventDefault(); forgotPasswordModal.style.display='none'; showAuthModal('login'); });
+
+  // LOGIN
+  loginForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})})
+      .then(r=>r.json()).then(data=>{
+        if (data.ok) { currentUser = data.user; updateLoginStatus(); authModal.style.display='none'; refreshCartCount(); alert('Đăng nhập thành công!'); }
+        else alert(data.message || 'Đăng nhập thất bại');
+      }).catch(()=> alert('Lỗi server'));
+  });
+
+  // REGISTER
+  registerForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+    const confirm = document.getElementById('registerConfirmPassword').value;
+    if (password !== confirm) { alert('Mật khẩu xác nhận không khớp'); return; }
+    fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})})
+      .then(r=>r.json()).then(data=>{
+        if (data.ok) { currentUser = data.user; updateLoginStatus(); authModal.style.display='none'; refreshCartCount(); alert('Đăng ký thành công!'); }
+        else alert(data.message || 'Đăng ký thất bại');
+      }).catch(()=> alert('Lỗi server khi đăng ký'));
+  });
+
+  // LOGOUT
+  logoutBtn.addEventListener('click', function() {
+    fetch('/api/logout',{method:'POST'}).then(()=> {
+      currentUser = null; updateLoginStatus(); refreshCartCount(); alert('Đã đăng xuất');
+    }).catch(()=> { currentUser = null; updateLoginStatus(); refreshCartCount(); });
+  });
+
+  // Update header UI; move/show cart button near logout when logged in
+  function updateLoginStatus() {
+    if (currentUser) {
+      userNameEl.textContent = currentUser.name || currentUser.displayName || currentUser.email || 'User';
+      userInfo.style.display = 'flex';
+      authButtons.style.display = 'none';
+
+      // hide nav cart (we will show cart next to logout)
+      navCartLink.style.display = 'none';
+
+      // create userCartBtn if not exists
+      if (!userCartBtn) {
+        userCartBtn = document.createElement('a');
+        userCartBtn.href = '#';
+        userCartBtn.id = 'userCartBtn';
+        userCartBtn.style.marginLeft = '10px';
+        userCartBtn.innerHTML = `<i class="fas fa-shopping-cart"></i><span id="cartCountUser" style="background:#ffcc00;color:#1a2a6c;border-radius:50%;padding:2px 6px;font-size:12px;margin-left:6px;font-weight:bold;">0</span>`;
+        userCartBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          openCartModal();
+        });
+        // insert before logout button
+        userInfo.insertBefore(userCartBtn, userInfo.children[userInfo.children.length-1]);
+      }
+      // sync count
+      refreshCartCount();
+    } else {
+      userInfo.style.display = 'none';
+      authButtons.style.display = 'block';
+      navCartLink.style.display = ''; // show nav cart
+      if (userCartBtn) { userCartBtn.remove(); userCartBtn = null; }
+    }
+  }
+
+  // Open cart modal and render cart UI
+  async function openCartModal() {
+    try {
+      const r = await fetch('/api/cart'); const data = await r.json();
+      if (!data.ok) { alert(data.message || 'Lỗi lấy giỏ hàng'); return; }
+      const cart = data.cart || [];
+      if (!cart.length) {
+        modalContent.innerHTML = `<h2>Giỏ hàng</h2><p>Giỏ hàng trống.</p>`;
+        modal.style.display = 'block';
+        return;
+      }
+
+      const rows = cart.map((it, idx) => {
+        const sub = (Number(it.price||0) * Number(it.quantity||1));
+        return `
+          <div class="cart-item" data-idx="${idx}" style="display:flex;gap:12px;margin-bottom:12px;align-items:center;">
+            <img src="${it.image||''}" alt="" style="width:80px;height:50px;object-fit:cover;border-radius:6px;">
+            <div style="flex:1;">
+              <div style="font-weight:600;">${it.name}</div>
+              <div style="color:#666;font-size:13px;">Giá: ${Number(it.price||0).toLocaleString()} VNĐ</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;">
+              <div>
+                <button class="qty-decrease" style="padding:4px 8px;margin-right:6px;">-</button>
+                <span class="qty">${Number(it.quantity||1)}</span>
+                <button class="qty-increase" style="padding:4px 8px;margin-left:6px;">+</button>
+              </div>
+              <div style="margin-top:6px;color:#1a2a6c;font-weight:700;">${sub.toLocaleString()} VNĐ</div>
+              <button class="remove-item" style="margin-top:6px;background:#ff6b6b;color:#fff;border:none;padding:6px 8px;border-radius:6px;cursor:pointer;">Xóa</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const total = cart.reduce((s,it) => s + (Number(it.price||0)*Number(it.quantity||1)), 0);
+
+      modalContent.innerHTML = `
+        <h2>Giỏ hàng</h2>
+        <div id="cartList">${rows}</div>
+        <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-weight:700;font-size:18px;">Tổng: ${total.toLocaleString()} VNĐ</div>
+          <div>
+            <button id="continueShopping" class="btn" style="margin-right:8px;background:#ddd;color:#333;border-radius:6px;padding:8px 12px;">Tiếp tục mua</button>
+            <button id="checkoutBtn" class="btn" style="background:#2b5876;color:white;border-radius:6px;padding:8px 12px;">Thanh toán</button>
+          </div>
+        </div>
+      `;
+      modal.style.display = 'block';
+
+      // attach listeners for qty +/- and remove
+      document.querySelectorAll('#cartList .qty-increase').forEach((btn,i) => {
+        btn.addEventListener('click', async function() { await changeQuantity(i, +1); });
+      });
+      document.querySelectorAll('#cartList .qty-decrease').forEach((btn,i) => {
+        btn.addEventListener('click', async function() { await changeQuantity(i, -1); });
+      });
+      document.querySelectorAll('#cartList .remove-item').forEach((btn,i) => {
+        btn.addEventListener('click', async function() { await removeItem(i); });
+      });
+
+      document.getElementById('checkoutBtn').addEventListener('click', async () => {
+        if (!confirm('Xác nhận thanh toán (mô phỏng)?')) return;
+        const r = await fetch('/api/checkout', { method: 'POST' });
+        const res = await r.json();
+        if (res.ok) {
+          alert(`Thanh toán thành công. Mã đơn: ${res.orderId}`);
+          modal.style.display = 'none';
+          await refreshCartCount();
+        } else {
+          alert(res.message || 'Lỗi thanh toán');
+        }
+      });
+
+      document.getElementById('continueShopping').addEventListener('click', () => modal.style.display = 'none');
+
+    } catch (e) {
+      console.error(e);
+      alert('Lỗi khi mở giỏ hàng');
+    }
+  }
+
+  // change quantity by delta for item index i
+  async function changeQuantity(i, delta) {
+    try {
+      const r = await fetch('/api/cart'); const data = await r.json();
+      if (!data.ok) return alert('Lỗi lấy giỏ hàng');
+      const cart = data.cart || [];
+      if (!cart[i]) return;
+      cart[i].quantity = Math.max(1, Number(cart[i].quantity || 1) + delta);
+      // save back
+      await fetch('/api/cart', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cart }) });
+      // re-open modal to refresh UI
+      openCartModal();
+      await refreshCartCount();
+    } catch (e) {
+      console.error(e);
+      alert('Lỗi cập nhật số lượng');
+    }
+  }
+
+  async function removeItem(i) {
+    try {
+      const r = await fetch('/api/cart'); const data = await r.json();
+      if (!data.ok) return alert('Lỗi');
+      const cart = data.cart || [];
+      cart.splice(i,1);
+      await fetch('/api/cart', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cart }) });
+      openCartModal();
+      await refreshCartCount();
+    } catch (e) {
+      console.error(e);
+      alert('Lỗi xóa item');
+    }
+  }
+
+  // showAuthModal helper (same as before)
+  function showAuthModal(defaultTab) {
+    authModal.style.display = 'block';
+    authTabs.forEach(tab => tab.classList.remove('active'));
+    authForms.forEach(form => form.classList.remove('active'));
+    document.querySelector(`.auth-tab[data-tab="${defaultTab}"]`).classList.add('active');
+    document.getElementById(`${defaultTab}Form`).classList.add('active');
+  }
+
+  // showProductDetails (same as before) -> reuse existing logic
+  function showProductDetails(productId) {
+    let productData = null;
+    productCards.forEach(card => {
+      const button = card.querySelector('.view-details');
+      if (button.getAttribute('data-id') === productId) {
+        productData = {
+          id: productId,
+          name: card.querySelector('h3').textContent,
+          price: Number((card.querySelector('.product-price').textContent || '0').replace(/[^\d]/g,'')) || 0,
+          image: card.querySelector('img').src,
+          description: card.querySelector('p').textContent,
+          sim: card.querySelector('.product-sim').textContent
+        };
+      }
+    });
+    if (!productData) return;
+    modalContent.innerHTML = `
+      <h2>${productData.name}</h2>
+      <img src="${productData.image}" alt="${productData.name}" class="modal-img">
+      <p><strong>Flight Sim:</strong> ${productData.sim}</p>
+      <p><strong>Mô tả:</strong> ${productData.description}</p>
+      <p><strong>Giá:</strong> ${productData.price.toLocaleString()} VNĐ</p>
+      <button id="modalAddToCart" class="btn" style="margin-top:20px;">Thêm vào giỏ hàng</button>
+    `;
+    modal.style.display = 'block';
+    document.getElementById('modalAddToCart').addEventListener('click', async () => {
+      // add to cart using server
+      try {
+        // fetch current cart
+        const cr = await fetch('/api/cart'); const data = await cr.json();
+        let cart = (data.ok && Array.isArray(data.cart)) ? data.cart : [];
+        const found = cart.find(i => i.id === productData.id.toString());
+        if (found) found.quantity = Number(found.quantity||1) + 1;
+        else cart.push({ id: productData.id, name: productData.name, price: productData.price, image: productData.image, quantity: 1 });
+        await fetch('/api/cart', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cart }) });
+        cartNotification.textContent = `Đã thêm "${productData.name}" vào giỏ hàng!`; cartNotification.style.display = 'block';
+        setTimeout(()=> cartNotification.style.display = 'none', 2500);
+        await refreshCartCount();
+        modal.style.display = 'none';
+      } catch (e) {
+        console.error(e); alert('Lỗi khi thêm giỏ hàng');
+      }
+    });
+  }
+
+});
+</script>
+
+
+</body>
+</html>
