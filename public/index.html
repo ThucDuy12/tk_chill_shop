@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tk.chill shop</title>
-    <link rel="icon" type="image/x-icon" href="/images/icon.png">
+    <title>tk.chill shop - Fixed Logout</title>
+    <link rel="icon" href="/images/icon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -704,7 +704,7 @@
         .user-info span {
             margin-right: 10px;
         }
-        /* Thêm style mới cho giỏ hàng khi đăng nhập */
+        
         #userCartBtn {
             color: white !important;
             display: flex;
@@ -728,6 +728,33 @@
             font-size: 12px;
             margin-left: 5px;
             font-weight: bold;
+        }
+        
+        /* Debug panel */
+        .debug-panel {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .debug-toggle {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #2b5876;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1001;
         }
     </style>
 </head>
@@ -982,8 +1009,8 @@
                 </div>
                 <div class="footer-section">
                     <h3>Liên Hệ</h3>
-                    <p><i class="fa-brands fa-discord"></i>>Discord</p>
-                    <p><i class="fas fa-envelope"></i>nguyentrantuankiet8@gmail.com</p>
+                    <p><i class="fa-brands fa-discord"></i> Discord</p>
+                    <p><i class="fas fa-envelope"></i> nguyentrantuankiet8@gmail.com</p>
                     <div class="social-icons">
                         <a href="https://www.facebook.com/tuankiet.nguyentran.1510?locale=vi_VN"><i class="fab fa-facebook"></i></a>
                         <a href="https://www.tiktok.com/@tk.chill"><i class="fa-brands fa-tiktok"></i></a>
@@ -995,9 +1022,15 @@
         </div>
     </footer>
 
+    <button class="debug-toggle" id="debugToggle">Debug</button>
+    <div class="debug-panel" id="debugPanel" style="display: none;">
+        <h3>Debug Info</h3>
+        <div id="debugContent"></div>
+    </div>
+
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // DOM elements (existing)
+  // DOM elements
   const navCartLink = document.querySelector('.nav-link[data-page="cart"]');
   const addToCartButtons = document.querySelectorAll('.add-to-cart');
   const viewDetailsButtons = document.querySelectorAll('.view-details');
@@ -1023,78 +1056,90 @@ document.addEventListener('DOMContentLoaded', function() {
   const forgotPasswordLink = document.getElementById('forgotPasswordLink');
   const backToLoginLink = document.getElementById('backToLoginLink');
   const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+  const debugToggle = document.getElementById('debugToggle');
+  const debugPanel = document.getElementById('debugPanel');
+  const debugContent = document.getElementById('debugContent');
 
   // cart button that will be injected next to logout when logged in
   let userCartBtn = null;
 
-  let cartCount = 0
-
   let currentUser = null;
+
+  // Debug functions
+  debugToggle.addEventListener('click', () => {
+    debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
+  });
+
+  function logDebug(message) {
+    const timestamp = new Date().toLocaleTimeString();
+    debugContent.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+    debugContent.scrollTop = debugContent.scrollHeight;
+  }
 
   // Helper to update cart count in header (reads server cart)
   async function refreshCartCount() {
-                if (!currentUser) { 
-                    cartCountSpan.textContent = '0'; 
-                    return 0;
-                }
-                try {
-                    const r = await fetch('/api/cart');
-                    const data = await r.json();
-                    if (data.ok) {
-                        const total = data.cart.reduce((s, it) => s + Number(it.quantity || 1), 0);
-                        cartCountSpan.textContent = total;
-                        // Cập nhật cả user cart count nếu có
-                        const userCartCount = document.getElementById('cartCountUser');
-                        if (userCartCount) {
-                            userCartCount.textContent = total;
-                        }
-                        return total;
-                    } else {
-                        cartCountSpan.textContent = '0';
-                        return 0;
-                    }
-                } catch (e) {
-                    console.error(e);
-                    cartCountSpan.textContent = '0';
-                    return 0;
-                }
-            }
+    if (!currentUser) { 
+      cartCountSpan.textContent = '0'; 
+      return 0;
+    }
+    try {
+      const r = await fetch('/api/cart');
+      const data = await r.json();
+      if (data.ok) {
+        const total = data.cart.reduce((s, it) => s + Number(it.quantity || 1), 0);
+        cartCountSpan.textContent = total;
+        // Cập nhật cả user cart count nếu có
+        const userCartCount = document.getElementById('cartCountUser');
+        if (userCartCount) {
+          userCartCount.textContent = total;
+        }
+        return total;
+      } else {
+        cartCountSpan.textContent = '0';
+        return 0;
+      }
+    } catch (e) {
+      console.error(e);
+      cartCountSpan.textContent = '0';
+      return 0;
+    }
+  }
 
-            // Sửa lỗi: Xóa dòng cartCount++ và thay bằng refreshCartCount
-            addToCartButtons.forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    if (!currentUser) { showAuthModal('login'); return; }
-                    const id = this.dataset.id;
-                    const name = this.dataset.name;
-                    const price = Number(this.dataset.price || 0);
-                    const image = this.dataset.image;
-                    try {
-                        // get current cart
-                        const cr = await fetch('/api/cart'); 
-                        const data = await cr.json();
-                        let cart = (data.ok && Array.isArray(data.cart)) ? data.cart : [];
-                        const found = cart.find(i => i.id === id);
-                        if (found) found.quantity = Number(found.quantity || 1) + 1;
-                        else cart.push({ id, name, price, image, quantity: 1 });
-                        // save back
-                        await fetch('/api/cart', { 
-                            method: 'POST', 
-                            headers: {'Content-Type':'application/json'}, 
-                            body: JSON.stringify({ cart }) 
-                        });
-                        cartNotification.textContent = `Đã thêm "${name}" vào giỏ hàng!`; 
-                        cartNotification.style.display = 'block';
-                        
-                        // Sửa lỗi: Thay vì tăng biến cục bộ, gọi refreshCartCount
-                        await refreshCartCount();
-                        
-                        setTimeout(()=> cartNotification.style.display = 'none', 2500);
-                    } catch (e) {
-                        console.error(e);
-                        alert('Lỗi khi thêm giỏ hàng');
-                    }
-                });
-            });
+  // Sửa lỗi: Xóa dòng cartCount++ và thay bằng refreshCartCount
+  addToCartButtons.forEach(btn => {
+    btn.addEventListener('click', async function() {
+      if (!currentUser) { showAuthModal('login'); return; }
+      const id = this.dataset.id;
+      const name = this.dataset.name;
+      const price = Number(this.dataset.price || 0);
+      const image = this.dataset.image;
+      try {
+        // get current cart
+        const cr = await fetch('/api/cart'); 
+        const data = await cr.json();
+        let cart = (data.ok && Array.isArray(data.cart)) ? data.cart : [];
+        const found = cart.find(i => i.id === id);
+        if (found) found.quantity = Number(found.quantity || 1) + 1;
+        else cart.push({ id, name, price, image, quantity: 1 });
+        // save back
+        await fetch('/api/cart', { 
+          method: 'POST', 
+          headers: {'Content-Type':'application/json'}, 
+          body: JSON.stringify({ cart }) 
+        });
+        cartNotification.textContent = `Đã thêm "${name}" vào giỏ hàng!`; 
+        cartNotification.style.display = 'block';
+        
+        // Sửa lỗi: Thay vì tăng biến cục bộ, gọi refreshCartCount
+        await refreshCartCount();
+        
+        setTimeout(()=> cartNotification.style.display = 'none', 2500);
+      } catch (e) {
+        console.error(e);
+        alert('Lỗi khi thêm giỏ hàng');
+      }
+    });
+  });
 
   // On load, check session user from server
   fetch('/api/me').then(r => r.json()).then(data => {
@@ -1102,7 +1147,10 @@ document.addEventListener('DOMContentLoaded', function() {
     else currentUser = null;
     updateLoginStatus();
     refreshCartCount();
-  }).catch(err => { console.error('Error /api/me', err); updateLoginStatus(); });
+  }).catch(err => { 
+    console.error('Error /api/me', err); 
+    updateLoginStatus(); 
+  });
 
   // Behavior: nav cart click
   navCartLink.addEventListener('click', function(e) {
@@ -1115,7 +1163,6 @@ document.addEventListener('DOMContentLoaded', function() {
     openCartModal();
   });
 
-
   // --- other UI handlers unchanged (view details / modal close / filters / auth forms)
   viewDetailsButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -1124,12 +1171,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  closeModal.forEach(close => close.addEventListener('click', () => { modal.style.display = 'none'; authModal.style.display = 'none'; forgotPasswordModal.style.display = 'none'; }));
-  window.addEventListener('click', function(e) { if (e.target == modal) modal.style.display = 'none'; if (e.target == authModal) authModal.style.display = 'none'; if (e.target == forgotPasswordModal) forgotPasswordModal.style.display = 'none'; });
+  closeModal.forEach(close => close.addEventListener('click', () => { 
+    modal.style.display = 'none'; 
+    authModal.style.display = 'none'; 
+    forgotPasswordModal.style.display = 'none'; 
+  }));
+  
+  window.addEventListener('click', function(e) { 
+    if (e.target == modal) modal.style.display = 'none'; 
+    if (e.target == authModal) authModal.style.display = 'none'; 
+    if (e.target == forgotPasswordModal) forgotPasswordModal.style.display = 'none'; 
+  });
 
   filterButtons.forEach(button => {
     button.addEventListener('click', function() {
-      filterButtons.forEach(b=>b.classList.remove('active')); this.classList.add('active');
+      filterButtons.forEach(b=>b.classList.remove('active')); 
+      this.classList.add('active');
       const filter = this.dataset.filter;
       productCards.forEach(card => card.style.display = (filter === 'all' || card.dataset.sim === filter) ? 'block' : 'none');
     });
@@ -1137,11 +1194,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
   loginBtn.addEventListener('click', () => showAuthModal('login'));
   registerBtn.addEventListener('click', () => showAuthModal('register'));
-  authTabs.forEach(tab => tab.addEventListener('click', function(){ authTabs.forEach(t=>t.classList.remove('active')); this.classList.add('active'); authForms.forEach(f=>f.classList.remove('active')); document.getElementById(`${this.dataset.tab}Form`).classList.add('active'); }));
+  authTabs.forEach(tab => tab.addEventListener('click', function(){ 
+    authTabs.forEach(t=>t.classList.remove('active')); 
+    this.classList.add('active'); 
+    authForms.forEach(f=>f.classList.remove('active')); 
+    document.getElementById(`${this.dataset.tab}Form`).classList.add('active'); 
+  }));
 
-  forgotPasswordLink.addEventListener('click', e => { e.preventDefault(); authModal.style.display='none'; forgotPasswordModal.style.display='block'; });
-  backToLoginLink.addEventListener('click', e => { e.preventDefault(); forgotPasswordModal.style.display='none'; showAuthModal('login'); });
+  forgotPasswordLink.addEventListener('click', e => { 
+    e.preventDefault(); 
+    authModal.style.display='none'; 
+    forgotPasswordModal.style.display='block'; 
+  });
+  
+  backToLoginLink.addEventListener('click', e => { 
+    e.preventDefault(); 
+    forgotPasswordModal.style.display='none'; 
+    showAuthModal('login'); 
+  });
+  
+  // Password visibility toggle
+  document.getElementById('loginPasswordToggle').addEventListener('click', function() {
+    const passwordInput = document.getElementById('loginPassword');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.classList.toggle('fa-eye');
+    this.classList.toggle('fa-eye-slash');
+  });
 
+  document.getElementById('registerPasswordToggle').addEventListener('click', function() {
+    const passwordInput = document.getElementById('registerPassword');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.classList.toggle('fa-eye');
+    this.classList.toggle('fa-eye-slash');
+  });
+
+  document.getElementById('registerConfirmPasswordToggle').addEventListener('click', function() {
+    const passwordInput = document.getElementById('registerConfirmPassword');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.classList.toggle('fa-eye');
+    this.classList.toggle('fa-eye-slash');
+  });
+  
   // LOGIN
   loginForm.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -1149,7 +1245,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const password = document.getElementById('loginPassword').value;
     fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})})
       .then(r=>r.json()).then(data=>{
-        if (data.ok) { currentUser = data.user; updateLoginStatus(); authModal.style.display='none'; refreshCartCount(); alert('Đăng nhập thành công!'); }
+        if (data.ok) { 
+          currentUser = data.user; 
+          updateLoginStatus(); 
+          authModal.style.display='none'; 
+          refreshCartCount(); 
+          alert('Đăng nhập thành công!'); 
+        }
         else alert(data.message || 'Đăng nhập thất bại');
       }).catch(()=> alert('Lỗi server'));
   });
@@ -1164,17 +1266,74 @@ document.addEventListener('DOMContentLoaded', function() {
     if (password !== confirm) { alert('Mật khẩu xác nhận không khớp'); return; }
     fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})})
       .then(r=>r.json()).then(data=>{
-        if (data.ok) { currentUser = data.user; updateLoginStatus(); authModal.style.display='none'; refreshCartCount(); alert('Đăng ký thành công!'); }
+        if (data.ok) { 
+          currentUser = data.user; 
+          updateLoginStatus(); 
+          authModal.style.display='none'; 
+          refreshCartCount(); 
+          alert('Đăng ký thành công!'); 
+        }
         else alert(data.message || 'Đăng ký thất bại');
       }).catch(()=> alert('Lỗi server khi đăng ký'));
   });
 
-  // LOGOUT
-  logoutBtn.addEventListener('click', function() {
-    fetch('/api/logout',{method:'POST'}).then(()=> {
-      currentUser = null; updateLoginStatus(); refreshCartCount(); alert('Đã đăng xuất');
-    }).catch(()=> { currentUser = null; updateLoginStatus(); refreshCartCount(); });
-  });
+  // LOGOUT - robust version
+logoutBtn.addEventListener('click', async function() {
+  logDebug('Logout button clicked');
+  logoutBtn.disabled = true;
+  try {
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'include', // << đảm bảo cookie/session được gửi
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    // nếu server trả lỗi status
+    if (!response.ok) {
+      const text = await response.text().catch(()=> '');
+      logDebug(`Logout HTTP error ${response.status}: ${text}`);
+      alert('Đăng xuất thất bại. Vui lòng thử lại.');
+      logoutBtn.disabled = false;
+      return;
+    }
+
+    // cố parse JSON nhưng an toàn khi body không phải JSON
+    let data;
+    try {
+      data = await response.json();
+    } catch (err) {
+      logDebug('Logout: invalid JSON response');
+      data = { ok: true }; // nếu server không trả JSON nhưng status OK -> coi như OK
+    }
+
+    logDebug(`Logout response: ${JSON.stringify(data)}`);
+
+    if (data.ok) {
+      // Xoá token trên client nếu có
+      try { localStorage.removeItem('token'); } catch(e){}
+      try { sessionStorage.removeItem('token'); } catch(e){}
+
+      // Nếu trang dùng cookie non-HttpOnly (không khuyến khích), xoá luôn:
+      // document.cookie = 'your_cookie_name=; max-age=0; path=/;';
+
+      currentUser = null;
+      updateLoginStatus();
+      await refreshCartCount();
+      alert('Đã đăng xuất');
+      // reload để chắc chắn mọi state client được reset
+      window.location.href = '/';
+    } else {
+      alert('Đăng xuất thất bại: ' + (data.message || ''));
+      logoutBtn.disabled = false;
+    }
+  } catch (error) {
+    logDebug('Logout error: ' + error);
+    console.error('Lỗi khi đăng xuất:', error);
+    alert('Lỗi kết nối khi đăng xuất');
+    logoutBtn.disabled = false;
+  }
+});
+
 
   // Update header UI; move/show cart button near logout when logged in
   function updateLoginStatus() {
@@ -1206,14 +1365,18 @@ document.addEventListener('DOMContentLoaded', function() {
       userInfo.style.display = 'none';
       authButtons.style.display = 'block';
       navCartLink.style.display = ''; // show nav cart
-      if (userCartBtn) { userCartBtn.remove(); userCartBtn = null; }
+      if (userCartBtn) { 
+        userCartBtn.remove(); 
+        userCartBtn = null; 
+      }
     }
   }
 
   // Open cart modal and render cart UI
   async function openCartModal() {
     try {
-      const r = await fetch('/api/cart'); const data = await r.json();
+      const r = await fetch('/api/cart'); 
+      const data = await r.json();
       if (!data.ok) { alert(data.message || 'Lỗi lấy giỏ hàng'); return; }
       const cart = data.cart || [];
       if (!cart.length) {
@@ -1294,7 +1457,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // change quantity by delta for item index i
   async function changeQuantity(i, delta) {
     try {
-      const r = await fetch('/api/cart'); const data = await r.json();
+      const r = await fetch('/api/cart'); 
+      const data = await r.json();
       if (!data.ok) return alert('Lỗi lấy giỏ hàng');
       const cart = data.cart || [];
       if (!cart[i]) return;
@@ -1312,7 +1476,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   async function removeItem(i) {
     try {
-      const r = await fetch('/api/cart'); const data = await r.json();
+      const r = await fetch('/api/cart'); 
+      const data = await r.json();
       if (!data.ok) return alert('Lỗi');
       const cart = data.cart || [];
       cart.splice(i,1);
@@ -1325,7 +1490,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // showAuthModal helper (same as before)
+  // showAuthModal helper
   function showAuthModal(defaultTab) {
     authModal.style.display = 'block';
     authTabs.forEach(tab => tab.classList.remove('active'));
@@ -1334,7 +1499,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById(`${defaultTab}Form`).classList.add('active');
   }
 
-  // showProductDetails (same as before) -> reuse existing logic
+  // showProductDetails
   function showProductDetails(productId) {
     let productData = null;
     productCards.forEach(card => {
@@ -1364,25 +1529,25 @@ document.addEventListener('DOMContentLoaded', function() {
       // add to cart using server
       try {
         // fetch current cart
-        const cr = await fetch('/api/cart'); const data = await cr.json();
+        const cr = await fetch('/api/cart'); 
+        const data = await cr.json();
         let cart = (data.ok && Array.isArray(data.cart)) ? data.cart : [];
         const found = cart.find(i => i.id === productData.id.toString());
         if (found) found.quantity = Number(found.quantity||1) + 1;
         else cart.push({ id: productData.id, name: productData.name, price: productData.price, image: productData.image, quantity: 1 });
         await fetch('/api/cart', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cart }) });
-        cartNotification.textContent = `Đã thêm "${productData.name}" vào giỏ hàng!`; cartNotification.style.display = 'block';
+        cartNotification.textContent = `Đã thêm "${productData.name}" vào giỏ hàng!`; 
+        cartNotification.style.display = 'block';
         setTimeout(()=> cartNotification.style.display = 'none', 2500);
         await refreshCartCount();
         modal.style.display = 'none';
       } catch (e) {
-        console.error(e); alert('Lỗi khi thêm giỏ hàng');
+        console.error(e); 
+        alert('Lỗi khi thêm giỏ hàng');
       }
     });
   }
-
 });
 </script>
-
-
 </body>
 </html>
